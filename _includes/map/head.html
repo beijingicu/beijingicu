@@ -1,0 +1,48 @@
+{%- include analytics.html -%}
+{%- include head.html -%}
+<meta charset="utf-8">
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+<title>{{ page.title }}</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+<!-- <script src="https://cdn.osmbuildings.org/classic/0.2.2b/OSMBuildings-Leaflet.js"></script> -->
+<script src="aerial/assets/js/leaflet-side-by-side.js"></script>
+<script src="aerial/assets/js/bing.js"></script>
+<!-- <script src="aerial/assets/js/CCapture.all.min.js"></script> -->
+<!-- <script src="aerial/assets/js/dom-to-image.js"></script> -->
+<script src="aerial/assets/js/leaflet-provider.js"></script>
+<script src="aerial/assets/js/Control.BingGeocoder.js"></script>
+
+<link rel="stylesheet" href="aerial/assets/css/Control.BingGeocoder.css" media="screen">
+<link rel="stylesheet" href="aerial/assets/css/aerial.css" media="screen">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css"> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script> -->
+<script>
+{%- include scripts/utils/utils.js -%}
+{%- include scripts/lib/throttle.js -%}
+{%- include scripts/lib/lazyload.js -%}
+</script>
+{%- include scripts/variables.html -%}
+<style>
+    body { margin:0; padding:0; }
+    body, table, tr, td, th, div, h1, h2, input { font-family: "Calibri", "Trebuchet MS", "Ubuntu", Serif; font-size: 11pt; }
+    #map { position:absolute; top:0; bottom:0; width:100%; } /* full size */
+    .ctl {
+        padding: 2px 10px 2px 10px;
+        background: white;
+        background: rgba(255,255,255,0.9);
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        border-radius: 5px;
+        text-align: right;
+    }
+    .title {
+        font-size: 18pt;
+        font-weight: bold;
+    }
+    .src {
+        font-size: 10pt;
+    }
+    .leaflet-left .leaflet-control {
+        text-align: left
+    }
+</style>
