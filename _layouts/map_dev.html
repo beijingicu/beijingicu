@@ -65,9 +65,9 @@ var yearalllist = yearfunclist.concat(['1750','1940','1960','2000','2010','2020'
 var basemaps_left = {}
 var basemaps_right = {}
 for (basemaps of [basemaps_left,basemaps_right]){
-    // for(year of yearfunclist){ 
-    //     basemaps[(year+'').substring(0,4)]=makesidelayer(year)
-    // }
+    for(year of yearfunclist){ 
+        basemaps[year]=makesidelayer(year)
+    }
     basemaps['1750'] = L.tileLayer('http://dsr.nii.ac.jp/beijing-maps/google-maps/tile/0.2/{z}/{x}_{y}.png',{
         attribution: '1750', 
         minNativeZoom:13, 
@@ -106,7 +106,7 @@ var map = L.map('map', {
         });
 
 // share
-var src = '<a target="_blank" rel="noopener noreferrer" href="/about" style="text-decoration:none; text-align:inherit">&copy {{page.sitename}} - {{page.sitedesc}}</a><div class="social-share" data-source="" data-title="{{ page.pagename }}" data-description="{{ page.pagedesc }}" data-image="{{ site.cdn }}{{ site.poster }}" data-wechat-qrcode-title="Scan WeChat QR" data-wechat-qrcode-helper="" data-sites="weibo,wechat,douban,qq,twitter,facebook" data-mobile-sites="weibo,twitter"><a target="_blank" rel="noopener noreferrer" href="mailto:{{site.email}}" class="social-share-icon icon-mail">M</a></div>';
+var src = '<a target="_blank" rel="noopener noreferrer" href="/about" style="text-decoration:none; text-align:inherit">&copy {{page.sitename}} - {{page.sitedesc}}</a><div class="social-share" data-source="" data-title="{{ page.title }}" data-description="{{ page.description }}" data-image="{{ site.cdn }}{{ site.poster }}" data-wechat-qrcode-title="Scan WeChat QR" data-wechat-qrcode-helper="" data-sites="weibo,wechat,douban,qq,twitter,facebook" data-mobile-sites="weibo,twitter"><a target="_blank" rel="noopener noreferrer" href="mailto:{{site.email}}" class="social-share-icon icon-mail">M</a></div>';
 var title = L.control({position: 'bottomleft'});
 title.onAdd = function(map) {
     this._div = L.DomUtil.create('div', 'ctl src');
@@ -126,7 +126,7 @@ title.onAdd = function(map) {
     return this._div;
     };
 title.update = function(props) {
-    this._div.innerHTML = '<a rel="noopener noreferrer" href="{{ site.url }}/icu-doc.html" style="text-decoration:none; color:black;">{{ page.pagename }}</a>';
+    this._div.innerHTML = '<a rel="noopener noreferrer" href="{{ site.url }}/icu-doc.html" style="text-decoration:none; color:black;">{{ page.title }}</a>';
     };
 title.addTo(map);
 
