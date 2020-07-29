@@ -1,0 +1,330 @@
+---
+title: Beijing Aerial History
+description: Among imagery, slide time to erase history
+layout: map
+---
+
+
+<div id="map"></div>
+<script> 
+// read url params
+var params = {};
+window.location.href.replace(/[?&]+([^=&]+)=([^&#]*)/gi, function(m, key, value) {
+    params[key] = value;
+});
+
+
+/* **** Leaflet **** */
+// bound
+var bigbounds = [[39.86, 116.45],[39.96, 116.33]];
+var smallbounds = [[39.86572446735752, 116.44348887780663],[39.954196820860616, 116.33614726486017]];
+
+// base layers
+var layer_bw = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png', 
+        {attribution: '', 
+        });
+
+var layer_bing = new L.BingLayer('AuJzwYKn6bT-SdcNxz6n2u5rdrmh0BR8YcFDhNRW_4mMNmhhYqVVtvZoEt7C8n2X', 
+        {minNativeZoom:15, 
+        bounds:smallbounds,
+        maxZoom: 20,
+        })
+
+var layer_bw_overlay = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png', 
+        {attribution: '', 
+        opacity: 0.5, 
+        });
+
+// var layer_osmb = new OSMBuildings(map).load('https://{s}.data.osmbuildings.org/0.2/anonymous/tile/{z}/{x}/{y}.json');
+//     layer_osmb.style({wallColor:'rgba(37, 3, 1, 0.8)', 
+//         roofColor:'rgba(244, 67, 54, 0.01)', 
+//         shadows:false, 
+//         zoomOffset: 4,
+//         minNativeZoom:13,
+//         })
+
+// aerial layers
+var jsdelivr_cdn = "{{ site.cdn }}aerial/tiles/"
+var map_zxy = '/{z}/{x}/{y}.png'
+function makesidelayer(year){
+    return L.tileLayer(jsdelivr_cdn+year+map_zxy, {
+        tms: true, 
+        attribution: year, 
+        maxNativeZoom:17, 
+        minNativeZoom:13, 
+        maxZoom: 19,
+        bounds: smallbounds,
+        });
+}
+var layer_1750_left = L.tileLayer('http://dsr.nii.ac.jp/beijing-maps/google-maps/tile/0.2/{z}/{x}_{y}.png',{
+        attribution: '1750', 
+        minNativeZoom:13, 
+        maxZoom: 19,
+        bounds: smallbounds,
+        });
+var layer_1750_right = L.tileLayer('http://dsr.nii.ac.jp/beijing-maps/google-maps/tile/0.2/{z}/{x}_{y}.png',{
+        attribution: '1750', 
+        minNativeZoom:13, 
+        maxZoom: 19,
+        bounds: smallbounds,
+        });
+var layer_bldg = makesidelayer('bldg')
+var layer_1938_left = makesidelayer(1938)
+var layer_1938_right = makesidelayer(1938)
+var layer_1959_left = makesidelayer(1959)
+var layer_1959_right = makesidelayer(1959)
+var layer_1999_left = makesidelayer(1999)
+var layer_1999_right = makesidelayer(1999)
+var layer_2008_left = makesidelayer(2008)
+var layer_2008_right = makesidelayer(2008)
+var layer_2011_left = makesidelayer(2011)
+var layer_2011_right = makesidelayer(2011)
+var layer_2020_left = new L.tileLayer('') 
+var layer_2020_right = new L.tileLayer('')
+
+
+//pass url params: https://blog.mastermaps.com/2012/10/how-to-control-your-leaflet-map-with.html
+var years = ['1750','1938','1959','1999','2008','2011','2020']
+if (years.includes(params.left)) {
+  var layer_param_left = 'layer_'+params.left+'_left'
+} else {
+    layer_param_left = 'layer_1999_left'
+}
+
+if (years.includes(params.right)) {
+  var layer_param_right = 'layer_'+params.right+'_right'
+} else {
+    layer_param_right = 'layer_2020_right'
+}
+
+// leaflet map
+var map = L.map('map', {
+        center: [parseFloat(params.lat)||39.93926584787565,parseFloat(params.lon)|| 116.38924554025185],
+        zoom: 16,
+        minZoom: 12,
+        maxZoom: 19,
+        layers: [layer_bw, layer_bing, eval(layer_param_left),eval(layer_param_right)],
+        attributionControl: false,
+        zoomControl: false,
+        });
+
+// share
+var src = '<a target="_blank" rel="noopener noreferrer" href="{{ site.url }}about" style="text-decoration:none; text-align:inherit">&copy Beijing ICU - Murder of the City</a><div class="social-share" data-source="" data-title="{{ page.title }}" data-description="{{ page.description }}" data-image="{{ site.cdn }}{{ site.poster }}" data-wechat-qrcode-title="Scan WeChat QR" data-wechat-qrcode-helper="" data-sites="weibo,wechat,douban,qq,twitter,facebook" data-mobile-sites="weibo,twitter"><a target="_blank" rel="noopener noreferrer" href="mailto:{{site.email}}" class="social-share-icon icon-mail">M</a></div>';
+var title = L.control({position: 'bottomleft'});
+title.onAdd = function(map) {
+    this._div = L.DomUtil.create('div', 'ctl src');
+    this.update();
+    return this._div;
+    };
+title.update = function(props) {
+    this._div.innerHTML = src;
+    };
+title.addTo(map);
+
+// title
+var title = L.control({position: 'bottomleft'});
+title.onAdd = function(map) {
+    this._div = L.DomUtil.create('div', 'ctl title');
+    this.update();
+    return this._div;
+    };
+title.update = function(props) {
+    this._div.innerHTML = '<a rel="noopener noreferrer" href="{{ site.url }}/icu-doc.html" style="text-decoration:none; color:black;">{{ page.title }}</a>';
+    };
+title.addTo(map);
+
+// // zoom control
+new L.Control.Zoom({ position: 'bottomleft' }).addTo(map);
+
+// selection panel
+var basemaps_left = {
+    "1750": layer_1750_left,
+    "1938": layer_1938_left,
+    "1959": layer_1959_left,
+    "1999": layer_1999_left,
+    "2008": layer_2008_left, 
+    "2011": layer_2011_left, 
+    "2020": layer_2020_left,
+    }
+var basemaps_right = {
+    "1750": layer_1750_right,
+    "1938": layer_1938_right,
+    "1959": layer_1959_right,
+    "1999": layer_1999_right,
+    "2008": layer_2008_right, 
+    "2011": layer_2011_right, 
+    "2020": layer_2020_right,
+    }
+var overlaymaps = {
+    "Roads":layer_bw_overlay,
+    "Bldgs":layer_bldg,
+    // "道路建筑":L.layerGroup([layer_bw_overlay,layer_bldg]),
+    // 'mybldg':layer_bldg,
+    }
+// Add base layers
+L.control.layers(
+    basemaps_right, 
+    overlaymaps,
+    {collapsed: false,
+    position:'topright',
+    },).addTo(map);
+L.control.layers(
+    basemaps_left, 
+    overlaymaps,
+    {collapsed: false, 
+    position:'topleft',
+    },).addTo(map);
+
+L.control.sideBySide(Object.values(basemaps_left),Object.values(basemaps_right)).addTo(map);
+
+// params.q
+{% raw %}
+function getcenter(q){
+    url = 'https://api.tianditu.gov.cn/search?postStr={%22keyWord%22:%22'+q+'%22,%22level%22:%2215%22,%22mapBound%22:%22116.40466,39.90684,116.45016,39.93138%22,%22queryType%22:%223%22,%22pointLonlat%22:%22116.39,%2039.91%22,%22queryRadius%22:%2221000%22,%22count%22:%221%22,%22start%22:%220%22}&type=query&tk=174705aebfe31b79b3587279e211cb9a'
+    http = new XMLHttpRequest();
+    http.onreadystatechange = function(){
+        if (http.readyState == 4 && http.status == 200){
+            if (typeof cb == 'function') cb(http.responseText);
+        }
+    }
+    http.open('GET', url, false)
+    http.send()
+    if (http.readyState===4){
+        map.flyTo(JSON.parse(http.responseText).pois[0].lonlat.split(' ').reverse().map(parseFloat),16);
+    }
+}
+{% endraw %}
+
+if (params.q) {
+    getcenter(params.q);
+} else if(params.icu){
+    console.log('hi')
+    setTimeout(function(){
+        map.flyToBounds(smallbounds)
+        layer_bldg.addTo(map)
+        layer_bw_overlay.addTo(map)
+    },2000);
+} else {
+    setTimeout(function(){map.zoomIn(1);},2000);
+}
+
+if (params.bldg) {
+    layer_bldg.addTo(map)    
+}
+
+// search widget
+var bingGeocoder = new L.Control.BingGeocoder('AsaKzgbo2GW8wrcv0mLCyVvEx2Q8V1N54Gpmizw-fzHIKOAjAMMy4TdNfKdS71vs');
+map.addControl(bingGeocoder);
+
+
+//language link
+var title = L.control({position: 'bottomright'});
+title.onAdd = function(map) {
+    this._div = L.DomUtil.create('div', 'ctl title tooltip');
+    this.update();
+    return this._div;
+    };
+title.update = function(props) {
+    this._div.innerHTML = '<a rel="noopener noreferrer" href="{{ site.url }}" style="text-decoration:none; color:black;">中</a><span class="tooltiptext">中文版</span>';
+    };
+title.addTo(map);
+
+//looplayer
+function clicklayer(i){
+    document.getElementsByClassName('leaflet-control-layers-selector')[i].click();
+}
+
+function addyearcap(text, size){
+    var yearcap = document.createElement('div');
+    yearcap.id = 'yearcap';
+    yearcap.innerHTML = text;
+    // yearcap.style.color = 'white';
+    // yearcap.style.zIndex = '1000';
+    // yearcap.style.position = 'absolute';
+    yearcap.style.fontSize = size;
+    // yearcap.style.top = '85%';
+    // yearcap.style.left = '50%';
+    // yearcap.style.transform = 'translate(-50%, -50%) scalex(1.5)';
+    // yearcap.style.textShadow = '0 0 20px black';
+    // yearcap.style.letterSpacing = '2vw';
+    document.body.appendChild(yearcap);
+}
+
+function changeyearcap(i){
+    document.getElementById('yearcap').innerHTML = '-'+Object.keys(basemaps_left)[i]+'-'
+}
+
+function removeyearcap(){
+    document.getElementById('yearcap').remove()
+}
+
+
+function looplayer(i){
+    if (i == 0){
+        clicklayer(i);
+        addyearcap('','10vw')
+        changeyearcap(i);
+        i++;
+        looplayer(i);
+    } else if (i < Object.keys(basemaps_left).length){
+        setTimeout(function(){
+            clicklayer(i);
+            changeyearcap(i);
+            i++;
+            looplayer(i);
+        },3000);
+    } else {
+        setTimeout(function(){
+        removeyearcap();
+        },3000);
+    }
+}
+
+var title = L.control({position: 'bottomright'});
+title.onAdd = function(map) {
+    this._div = L.DomUtil.create('div', 'ctl title tooltip');
+    this.update();
+    return this._div;
+    };
+title.update = function(props) {
+    this._div.innerHTML = '<a rel="noopener noreferrer" href="javascript:void(null);" onclick="looplayer(0);" style="text-decoration:none; color:black;">⏳</a><span class="tooltiptext">Time Travel</span>';
+    };
+title.addTo(map);
+
+// share location
+function copylonlat(){
+    shareurl = window.location.href.split('?')[0]
+    +'?lat='+map.getCenter().lat
+    +'&lon='+map.getCenter().lng
+    +'&left='+parseInt(document.querySelectorAll('input[type=radio]:checked')[0].nextSibling.innerText)
+    +'&right='+parseInt(document.querySelectorAll('input[type=radio]:checked')[1].nextSibling.innerText)
+    if(map.hasLayer(layer_bldg)){
+        shareurl+='&bldg=1'
+    }
+
+    var dummy = document.createElement('textarea')
+    document.body.appendChild(dummy)
+    dummy.value=shareurl
+    dummy.select()
+    dummy.setSelectionRange(0, 99999)
+    document.execCommand("copy")
+    document.body.removeChild(dummy)
+    addyearcap("View Link Copied",'20px')
+    setTimeout(function(){
+        removeyearcap();
+        },3000);
+
+}
+
+var title = L.control({position: 'bottomright'});
+title.onAdd = function(map) {
+    this._div = L.DomUtil.create('div', 'ctl title tooltip');
+    this.update();
+    return this._div;
+    };
+title.update = function(props) {
+    this._div.innerHTML = '<a rel="noopener noreferrer" href="javascript:void(null);" onclick="copylonlat();" style="text-decoration:none; color:black;">🔗</a><span class="tooltiptext">Share View</span>';
+    };
+title.addTo(map);
+
+</script>
