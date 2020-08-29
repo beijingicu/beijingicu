@@ -10,6 +10,7 @@ _*.py
 aerial/tiles/*/*.html
 aerial/tiles/*/*.xml
 _drafts/
+aerial/assets/_drafts
 
 # General
 .DS_Store
