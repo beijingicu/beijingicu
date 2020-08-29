@@ -127,7 +127,7 @@ title.onAdd = function(map) {
     return this._div;
     };
 title.update = function(props) {
-    this._div.innerHTML = '<a rel="noopener noreferrer" href="{{ site.url }}/icu-doc.html" style="text-decoration:none; color:black;">{{ page.title }}</a>';
+    this._div.innerHTML = '<a rel="noopener noreferrer" href="{{ site.url }}/icu-doc.html" style="text-decoration:none; color:black;">{{ page.title }}-{{page.manual}}</a>';
     };
 title.addTo(map);
 
