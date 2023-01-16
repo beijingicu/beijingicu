@@ -11,8 +11,8 @@
 ##############################
 text_skin: default # "default" (default), "dark", "forest", "ocean", "chocolate", "orange"
 highlight_theme: default # "default" (default), "tomorrow", "tomorrow-night", "tomorrow-night-eighties", "tomorrow-night-blue", "tomorrow-night-bright"
-siteurl : https://bei.jing.icu/
-icuurl  : https://bei.jing.icu/?icu=1
+siteurl : http://bei.jing.icu/
+icuurl  : http://bei.jing.icu/?icu=1
 baseurl : # does not include hostname
 title   : 再见北京 | Beijing ICU
 description: 故都消亡史 | Murder of the City # this means to ignore newlines until "Language & timezone"
